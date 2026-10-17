@@ -5,11 +5,9 @@ import com.workintech.fswebs18challengemaven.entity.Color;
 import com.workintech.fswebs18challengemaven.entity.Type;
 import com.workintech.fswebs18challengemaven.exceptions.CardErrorResponse;
 import com.workintech.fswebs18challengemaven.exceptions.CardException;
-import com.workintech.fswebs18challengemaven.repository.CardRepository;
 import com.workintech.fswebs18challengemaven.repository.CardRepositoryImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +43,7 @@ public class MainTest {
     void testEnumConstants() {
         assertTrue(Color.valueOf("SPADE") == Color.SPADE);
         assertTrue(Color.valueOf("CLUB") == Color.CLUB);
-        assertTrue(Color.valueOf("HEARTH") == Color.HEARTH);
+        assertTrue(Color.valueOf("HEART") == Color.HEART);
         assertTrue(Color.valueOf("DIAMOND") == Color.DIAMOND);
 
         assertTrue(Type.valueOf("JACK") == Type.JACK);
@@ -88,7 +86,7 @@ public class MainTest {
         Card card = new Card();
         card.setId(1L);
         card.setType(Type.ACE);
-        card.setColor(Color.HEARTH);
+        card.setColor(Color.HEART);
         cardRepository.save(card);
         verify(entityManager).persist(card);
     }
@@ -108,11 +106,11 @@ public class MainTest {
         when(entityManager.createQuery(anyString(), eq(Card.class))).thenReturn(query);
 
         Card card1 = new Card();
-        card1.setColor(Color.HEARTH);
+        card1.setColor(Color.HEART);
         card1.setType(Type.ACE);
 
         Card card2 = new Card();
-        card2.setColor(Color.HEARTH);
+        card2.setColor(Color.HEART);
         card2.setType(Type.ACE);
 
         when(query.getResultList()).thenReturn(Arrays.asList(card1, card2));
@@ -128,7 +126,7 @@ public class MainTest {
 
         when(query.getResultList()).thenReturn(new ArrayList<>());
 
-        assertThrows(CardException.class, () -> cardRepository.findByColor("HEARTH"));
+        assertThrows(CardException.class, () -> cardRepository.findByColor("HEART"));
     }
 
     @Test
@@ -136,7 +134,7 @@ public class MainTest {
         Card card = new Card();
         card.setId(1L);
         card.setType(Type.ACE);
-        card.setColor(Color.HEARTH);
+        card.setColor(Color.HEART);
         when(entityManager.merge(card)).thenReturn(card);
         Card updated = cardRepository.update(card);
         assertEquals(1L, updated.getId());
@@ -158,7 +156,7 @@ public class MainTest {
         when(entityManager.createQuery(anyString(), eq(Card.class))).thenReturn(query);
 
         Card card1 = new Card();
-        card1.setColor(Color.HEARTH);
+        card1.setColor(Color.HEART);
         card1.setValue(10);
 
         Card card2 = new Card();
@@ -176,11 +174,11 @@ public class MainTest {
         when(entityManager.createQuery(anyString(), eq(Card.class))).thenReturn(query);
 
         Card card1 = new Card();
-        card1.setColor(Color.HEARTH);
+        card1.setColor(Color.HEART);
         card1.setType(Type.ACE);
 
         Card card2 = new Card();
-        card2.setColor(Color.HEARTH);
+        card2.setColor(Color.HEART);
         card2.setType(Type.ACE);
 
         when(query.getResultList()).thenReturn(Arrays.asList(card1, card2));
@@ -191,8 +189,8 @@ public class MainTest {
 
     @Test
     void testImplementsCardRepositoryInterface() {
-        CardRepository burgerDaoImpl = new CardRepositoryImpl(null);
-        assertTrue(burgerDaoImpl instanceof CardRepository, "CardRepositoryImpl should implement CardRepository interface");
+        CardRepositoryImpl burgerDaoImpl = new CardRepositoryImpl(null);
+        assertTrue(burgerDaoImpl instanceof CardRepositoryImpl, "CardRepositoryImpl should implement CardRepository interface");
     }
 
     @Test

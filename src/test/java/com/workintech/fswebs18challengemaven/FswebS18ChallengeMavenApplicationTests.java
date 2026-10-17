@@ -7,14 +7,13 @@ import com.workintech.fswebs18challengemaven.entity.Color;
 import com.workintech.fswebs18challengemaven.entity.Type;
 import com.workintech.fswebs18challengemaven.exceptions.CardException;
 import com.workintech.fswebs18challengemaven.exceptions.GlobalExceptionHandler;
-import com.workintech.fswebs18challengemaven.repository.CardRepository;
+import com.workintech.fswebs18challengemaven.repository.CardRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -45,7 +44,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private CardRepository cardRepository;
+	private CardRepositoryImpl cardRepositoryImpl;
 
 	private Card card;
 	private Card card2;
@@ -56,13 +55,13 @@ class FswebS18ChallengeMavenApplicationTests {
 	void setUp() {
 		card = new Card();
 		card.setId(1L);
-		card.setColor(Color.HEARTH);
+		card.setColor(Color.HEART);
 		card.setType(Type.ACE);
 		card.setValue(null);
 
 		card2 = new Card();
 		card2.setId(2L);
-		card2.setColor(Color.HEARTH);
+		card2.setColor(Color.HEART);
 		card2.setType(null);
 		card2.setValue(10);
 	}
@@ -99,7 +98,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@Test
 	@DisplayName("Card not found exception test")
 	void testCardNotFoundException() throws Exception {
-		given(cardRepository.findByColor(anyString())).willThrow(new CardException("Card not found", HttpStatus.NOT_FOUND));
+		given(cardRepositoryImpl.findByColor(anyString())).willThrow(new CardException("Card not found", HttpStatus.NOT_FOUND));
 
 		mockMvc.perform(get("/cards/byColor/{color}", "Hello"))
 				.andExpect(status().isNotFound())
@@ -110,7 +109,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@Test
 	@DisplayName("Generic exception test")
 	void testGenericException() throws Exception {
-		given(cardRepository.findByType(anyString())).willThrow(new RuntimeException("Unexpected error"));
+		given(cardRepositoryImpl.findByType(anyString())).willThrow(new RuntimeException("Unexpected error"));
 
 		mockMvc.perform(get("/cards/byType/{type}", "Hello"))
 				.andExpect(status().isInternalServerError())
@@ -121,7 +120,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@Test
 	@DisplayName("Save card test")
 	void testSaveCard() throws Exception {
-		given(cardRepository.save(any())).willReturn(card);
+		given(cardRepositoryImpl.save(any())).willReturn(card);
 
 		mockMvc.perform(post("/cards")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +133,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@DisplayName("Find all cards test")
 	void testFindAllCards() throws Exception {
 		List<Card> cards = Arrays.asList(card);
-		given(cardRepository.findAll()).willReturn(cards);
+		given(cardRepositoryImpl.findAll()).willReturn(cards);
 
 		mockMvc.perform(get("/cards"))
 				.andExpect(status().isOk())
@@ -145,7 +144,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@Test
 	@DisplayName("Find card by color test")
 	void testGetCardByColor() throws Exception {
-		given(cardRepository.findByColor("HEARTH")).willReturn(List.of(card));
+		given(cardRepositoryImpl.findByColor("HEART")).willReturn(List.of(card));
 
 		mockMvc.perform(get("/cards/byColor/{color}", card.getColor()))
 				.andExpect(status().isOk())
@@ -158,7 +157,7 @@ class FswebS18ChallengeMavenApplicationTests {
 		Card updatedCard = new Card();
 		updatedCard.setId(1L);
 		updatedCard.setType(Type.KING);
-		given(cardRepository.update(any())).willReturn(updatedCard);
+		given(cardRepositoryImpl.update(any())).willReturn(updatedCard);
 
 		mockMvc.perform(put("/cards/")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -171,7 +170,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@DisplayName("Remove card test")
 	void testRemoveCard() throws Exception {
 
-		given(cardRepository.remove(card.getId())).willReturn(card);
+		given(cardRepositoryImpl.remove(card.getId())).willReturn(card);
 
 		mockMvc.perform(delete("/cards/{id}", card.getId()))
 				.andExpect(status().isOk());
@@ -182,7 +181,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@DisplayName("Find by type test")
 	void testFindByType() throws Exception {
 		List<Card> cards = Arrays.asList(card);
-		given(cardRepository.findByType(card.getType().toString())).willReturn(cards);
+		given(cardRepositoryImpl.findByType(card.getType().toString())).willReturn(cards);
 
 		mockMvc.perform(get("/cards/byType/{type}", card.getType()))
 				.andExpect(status().isOk())
@@ -194,7 +193,7 @@ class FswebS18ChallengeMavenApplicationTests {
 	@DisplayName("Find by value test")
 	void testFindByValue() throws Exception {
 		List<Card> cards = Arrays.asList(card2);
-		given(cardRepository.findByValue(card2.getValue().intValue())).willReturn(cards);
+		given(cardRepositoryImpl.findByValue(card2.getValue().intValue())).willReturn(cards);
 
 		mockMvc.perform(get("/cards/byValue/{value}", card2.getValue().intValue()))
 				.andExpect(status().isOk())
